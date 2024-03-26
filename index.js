@@ -10,21 +10,22 @@ import { register, login, update, sendRegistrationMail } from './controllers/aut
 import { createPost } from './controllers/posts.js';
 import { authenticationMiddleware } from "./middleware/auth.js";
 import userRoutes from './routes/userRoutes.js';
-import postRoutes from './routes/postRoutes.js';;
+import postRoutes from './routes/postRoutes.js';
 import messageRoutes from "./routes/MessageRoutes.js";
 
 // Configurations
 const app = express();
 dotenv.config();
 
-app.use((req, res, next) => {
-    res.append("Access-Control-Allow-Origin", ["*"]);
-    res.append("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH");
-    res.append("Access-Control-Allow-Headers", "Content-Type,Authorization");
-    res.append("Access-Control-Allow-Credentials", "true");
-    next();
-});
-
+app.options("*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+    res.header("Access-Control-Max-Age", "3600");
+    res.send();
+  });
+  
+app.use(express.static('build'))
 app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
@@ -46,7 +47,6 @@ app.use('/message', messageRoutes);
 
 // Mongoose Setup
 const port = process.env.PORT || 5000;
-
 
 const start = async () => {
     try {
@@ -82,6 +82,5 @@ const start = async () => {
         console.log(error);
     }
 }
-
 
 start();
